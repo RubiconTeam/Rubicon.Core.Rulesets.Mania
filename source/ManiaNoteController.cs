@@ -55,11 +55,6 @@ namespace Rubicon.Core.Rulesets.Mania;
 	/// The lane graphic for this manager.
 	/// </summary>
 	[Export] public AnimatedSprite2D LaneObject;
-
-	/// <summary>
-	/// Holds the currently held note. Used by <see cref="ManiaNoteSkin"/> to determine the order in which hold tails are drawn.
-	/// </summary>
-	[Export] public Node2D TailHolder;
 	
 	private List<AnimatedSprite2D> _splashSprites = new();
 	private int _splashCount = 0;
@@ -157,16 +152,6 @@ namespace Rubicon.Core.Rulesets.Mania;
 		LaneObject.SpriteFrames = NoteSkin.Lanes;
 		LaneObject.TextureFilter = NoteSkin.Filter;
 		LaneObject.Play($"{Direction}LaneNeutral", 1f, true);
-
-		if (TailHolder == null)
-		{
-			TailHolder = new Node2D();
-			TailHolder.Name = "Tail Holder";
-			AddChild(TailHolder);
-		}
-
-		int laneChildIndex = LaneObject.GetIndex();
-		MoveChild(TailHolder, !NoteSkin.HoldsBehindLanes ? laneChildIndex + 1 : laneChildIndex);
 	}
 
 	protected override void AssignData(Note note, NoteData noteData)
@@ -201,7 +186,7 @@ namespace Rubicon.Core.Rulesets.Mania;
 						RemoveChild(HitObjects[result.Index]);
 						break;
 					case Hit.Tail:
-						TailHolder.RemoveChild(HitObjects[result.Index]);
+						RemoveChild(HitObjects[result.Index]);
 						if (NoteSkin.HoldCovers == null || !greatOrAbove)
 							break;
 							
@@ -229,8 +214,8 @@ namespace Rubicon.Core.Rulesets.Mania;
 					_holdCover.Rotation = 0f;
 					_holdCover.Play($"{Direction}LaneCoverStart");
 				}
-				
-				HitObjects[result.Index].Reparent(TailHolder);
+
+				HitObjects[result.Index].ZIndex = NoteSkin.HoldsBehindLanes ? LaneObject.ZIndex - 1 : LaneObject.ZIndex;
 			}	
 		}
 		else

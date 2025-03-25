@@ -55,6 +55,11 @@ namespace Rubicon.Core.Rulesets.Mania;
 	[Export] public bool HoldsBehindLanes = false;
 
 	/// <summary>
+	/// Setting this to true will put hold tails behind the notes.
+	/// </summary>
+	[Export] public bool HoldsBehindNotes = false;
+
+	/// <summary>
 	/// The filtering used when generating notes and lanes.
 	/// </summary>
 	[Export] public CanvasItem.TextureFilterEnum Filter = CanvasItem.TextureFilterEnum.Linear;

@@ -86,7 +86,7 @@ namespace Rubicon.Core.Rulesets.Mania;
 		{
 			direction = NoteSkin.GetDirection(noteData.Lane, ParentController.ParentBarLine.Chart.Lanes).ToLower();
 			Note.Play($"{direction}NoteNeutral");
-			Note.ZIndex = NoteSkin.HoldsBehindLanes ? 1 : 0;
+			Note.ZIndex = NoteSkin.HoldsBehindNotes ? 1 : 0;
 			Note.TextureFilter = NoteSkin.Filter;
 			HoldContainer.TextureFilter = NoteSkin.Filter;
 			Note.Visible = true;
@@ -176,7 +176,7 @@ namespace Rubicon.Core.Rulesets.Mania;
 		Note.SpriteFrames = noteSkin.Notes;
 		Note.TextureFilter = NoteSkin.Filter;
 		Note.Scale = Vector2.One * NoteSkin.Scale;
-		Note.ZIndex = NoteSkin.HoldsBehindLanes ? 1 : 0;
+		Note.ZIndex = NoteSkin.HoldsBehindNotes ? 1 : 0;
 		
 		Tail.Centered = false;
 		Tail.SpriteFrames = noteSkin.Holds;
