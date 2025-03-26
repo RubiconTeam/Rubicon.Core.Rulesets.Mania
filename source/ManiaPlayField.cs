@@ -25,7 +25,7 @@ namespace Rubicon.Core.Rulesets.Mania;
     /// <param name="meta">The song meta</param>
     /// <param name="chart">The chart loaded</param>
     /// <param name="targetIndex">The index to play in <see cref="SongMeta.PlayableCharts"/>.</param>
-    public override void Setup(SongMeta meta, RubiChart chart, int targetIndex, EventMeta events)
+    public override void Setup(RuleSet ruleSetData, SongMeta meta, RubiChart chart, int targetIndex, EventMeta events)
     {
         string noteSkinName = meta.NoteSkin;
         string noteSkinPath = PathUtility.GetResourcePath($"res://resources/ui/styles/{noteSkinName}/Mania");
@@ -41,8 +41,8 @@ namespace Rubicon.Core.Rulesets.Mania;
         maniaFactory.NoteSkin = NoteSkin;
         Factory = maniaFactory;
         
-        base.Setup(meta, chart, targetIndex, events);
-        
+        base.Setup(ruleSetData, meta, chart, targetIndex, events);
+
         Name = "Mania PlayField";
         for (int i = 0; i < BarLines.Length; i++)
             BarLines[i].MoveToFront();
@@ -75,6 +75,9 @@ namespace Rubicon.Core.Rulesets.Mania;
             maniaBarLine.AnchorLeft = maniaBarLine.AnchorRight = ((i * 0.5f) - (Chart.Charts.Length - 1) * 0.5f / 2f) + 0.5f;
             //BarLines[i].SetAnchorsPreset(barLinePreset, true);
         }
+        
+        GameHud?.Flip(UserSettings.Rubicon.Mania.DownScroll);
+        PlayerHud?.Flip(UserSettings.Rubicon.Mania.DownScroll);
     }
 
     /// <inheritdoc />
