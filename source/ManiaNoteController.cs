@@ -183,10 +183,13 @@ namespace Rubicon.Core.Rulesets.Mania;
 						if (greatOrAbove)
 							GenerateTapSplash();
 						
-						RemoveChild(HitObjects[result.Index]);
+						if (HitObjects[result.Index] != null)
+							RemoveChild(HitObjects[result.Index]);
 						break;
 					case Hit.Tail:
-						RemoveChild(HitObjects[result.Index]);
+						if (HitObjects[result.Index] != null)
+							RemoveChild(HitObjects[result.Index]);
+						
 						if (NoteSkin.HoldCovers == null || !greatOrAbove)
 							break;
 							
@@ -195,7 +198,7 @@ namespace Rubicon.Core.Rulesets.Mania;
 						break;
 				}
 				
-				HitObjects[result.Index].PrepareRecycle();
+				HitObjects[result.Index]?.PrepareRecycle();
 			}
 			else
 			{
@@ -215,7 +218,7 @@ namespace Rubicon.Core.Rulesets.Mania;
 					_holdCover.Play($"{Direction}LaneCoverStart");
 				}
 
-				HitObjects[result.Index].ZIndex = NoteSkin.HoldsBehindLanes ? LaneObject.ZIndex - 1 : LaneObject.ZIndex;
+				HitObjects[result.Index]?.SetZIndex(NoteSkin.HoldsBehindLanes ? LaneObject.ZIndex - 1 : LaneObject.ZIndex);
 			}	
 		}
 		else
@@ -232,8 +235,10 @@ namespace Rubicon.Core.Rulesets.Mania;
 
 			if (result.Note.MsLength <= 0f)
 			{
-				RemoveChild(HitObjects[result.Index]);
-				HitObjects[result.Index].PrepareRecycle();
+				if (HitObjects[result.Index] != null)
+					RemoveChild(HitObjects[result.Index]);
+				
+				HitObjects[result.Index]?.PrepareRecycle();
 			}
 		}
 
