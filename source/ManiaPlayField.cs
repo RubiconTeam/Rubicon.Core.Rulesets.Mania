@@ -78,6 +78,8 @@ namespace Rubicon.Core.Rulesets.Mania;
         
         GameHud?.Flip(UserSettings.Rubicon.Mania.DownScroll);
         PlayerHud?.Flip(UserSettings.Rubicon.Mania.DownScroll);
+        
+        base.UpdateOptions();
     }
 
     /// <inheritdoc />
