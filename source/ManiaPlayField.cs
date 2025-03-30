@@ -171,7 +171,7 @@ namespace Rubicon.Core.Rulesets.Mania;
     }
 
     /// <inheritdoc />
-    public override bool GetFailCondition() => Health <= 0;
+    public override bool HasFailed() => Health <= 0;
 
     public override BarLine CreateBarLine(IndividualChart chart, int index)
     {
