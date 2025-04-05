@@ -82,17 +82,7 @@ namespace Rubicon.Core.Rulesets.Mania;
 		AddChild(_holdCover);
 		
 		ChangeNoteSkin(noteSkin);
-		
-		Notes = parent.Chart.Notes.Where(x => x.Lane == Lane).ToArray();
-		Array.Sort(Notes, (a, b) =>
-		{
-			if (a.Time < b.Time)
-				return -1;
-			if (a.Time > b.Time)
-				return 1;
-			
-			return 0;
-		});
+		Notes = parent.Chart.GetNotesAtLane((byte)Lane);
 	}
 
 	public override void _Process(double delta)
@@ -268,7 +258,7 @@ namespace Rubicon.Core.Rulesets.Mania;
 			
 		if (Mathf.Abs(hitTime) <= ProjectSettings.GetSetting("rubicon/judgments/bad_hit_window").AsSingle()) // Literally any other rating
 		{
-			ProcessQueue.Add(GetResult(noteIndex: NoteHitIndex, distance: hitTime, holding: notes[NoteHitIndex].Length > 0));
+			ProcessQueue.Add(GetResult(noteIndex: NoteHitIndex, distance: hitTime, holding: notes[NoteHitIndex].MsLength > 0));
 			NoteHitIndex++;
 		}
 		else

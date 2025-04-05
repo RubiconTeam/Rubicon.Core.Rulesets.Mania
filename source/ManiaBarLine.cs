@@ -18,7 +18,7 @@ namespace Rubicon.Core.Rulesets.Mania;
     /// <param name="chart">The individual chart provided</param>
     /// <param name="noteSkin">The note skin</param>
     /// <param name="scrollSpeed">The scroll speed</param>
-    public void Setup(IndividualChart chart, ManiaNoteSkin noteSkin, float scrollSpeed)
+    public void Setup(ChartData chart, ManiaNoteSkin noteSkin, float scrollSpeed)
     {
         Chart = chart;
         NoteSkin = noteSkin;
