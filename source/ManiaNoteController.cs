@@ -61,18 +61,9 @@ namespace Rubicon.Core.Rulesets.Mania;
 	private AnimatedSprite2D _holdCover;
 	private int _lastStep = -1;
 
-	/// <summary>
-	/// Sets up this manager for Mania gameplay.
-	/// </summary>
-	/// <param name="parent">The parent <see cref="ManiaBarLine"/>></param>
-	/// <param name="lane">The lane index</param>
-	/// <param name="noteSkin">The note skin provided</param>
-	public void Setup(ManiaBarLine parent, int lane, ManiaNoteSkin noteSkin)
+	public override void Setup()
 	{
-		ParentBarLine = parent;
-		Lane = lane;
-		Direction = noteSkin.GetDirection(lane, parent.Chart.Lanes);
-		Action = $"play_mania_{ParentBarLine.Managers.Length}k_{Lane}";
+		Action = $"play_mania_{ParentBarLine.Controllers.Length}k_{Lane}";
 		
 		_holdCover = new AnimatedSprite2D();
 		_holdCover.Name = "Hold Cover";
@@ -80,9 +71,6 @@ namespace Rubicon.Core.Rulesets.Mania;
 		_holdCover.Visible = false;
 		_holdCover.AnimationFinished += OnHoldCoverAnimationFinished;
 		AddChild(_holdCover);
-		
-		ChangeNoteSkin(noteSkin);
-		Notes = parent.Chart.GetNotesAtLane((byte)Lane);
 	}
 
 	public override void _Process(double delta)
@@ -124,6 +112,7 @@ namespace Rubicon.Core.Rulesets.Mania;
 	public void ChangeNoteSkin(ManiaNoteSkin noteSkin)
 	{
 		NoteSkin = noteSkin;
+		Direction = noteSkin.GetDirection(Lane, ParentBarLine.Chart.Lanes);
 		_splashCount = NoteSkin.GetSplashCountForDirection(Direction);
 		
 		if (noteSkin.HoldCovers != null)
@@ -159,7 +148,7 @@ namespace Rubicon.Core.Rulesets.Mania;
 		{
 			if (result.Hit != Hit.Hold)
 			{
-				if (NoteHeld == null || NoteHeld != null && (Autoplay || !Autoplay && Input.IsActionPressed($"play_mania_{ParentBarLine.Managers.Length}k_{Lane}")))
+				if (NoteHeld == null || NoteHeld != null && (Autoplay || !Autoplay && Input.IsActionPressed($"play_mania_{ParentBarLine.Controllers.Length}k_{Lane}")))
 					LaneObject.Animation = $"{Direction}LaneConfirm";
 				
 				NoteHeld = null;

@@ -11,32 +11,25 @@ namespace Rubicon.Core.Rulesets.Mania;
     /// The note skin associated with this bar line.
     /// </summary>
     [Export] public ManiaNoteSkin NoteSkin;
-    
-    /// <summary>
-    /// Sets up this bar line for usage in Mania gameplay.
-    /// </summary>
-    /// <param name="chart">The individual chart provided</param>
-    /// <param name="noteSkin">The note skin</param>
-    /// <param name="scrollSpeed">The scroll speed</param>
-    public void Setup(ChartData chart, ManiaNoteSkin noteSkin, float scrollSpeed)
-    {
-        Chart = chart;
-        NoteSkin = noteSkin;
 
-        Managers = new NoteController[chart.Lanes];
-        for (int i = 0; i < chart.Lanes; i++)
+    public override NoteController CreateNoteController() => new ManiaNoteController();
+
+    public void ChangeNoteSkin(ManiaNoteSkin noteSkin, bool updatePositions = false)
+    {
+        NoteSkin = noteSkin;
+        for (int c = 0; c < Controllers.Length; c++)
         {
-            ManiaNoteController noteMan = new ManiaNoteController();
-            noteMan.Setup(this, i, noteSkin);
-            noteMan.Position = new Vector2(i * NoteSkin.LaneSize - ((chart.Lanes - 1) * NoteSkin.LaneSize / 2f), 0);
-            noteMan.Name = "ManiaNoteController " + i;
-            noteMan.ScrollSpeed = scrollSpeed;
+            if (Controllers[c] is not ManiaNoteController controller)
+                continue;
             
-            AddChild(noteMan);
-            Managers[i] = noteMan;
+            controller.ChangeNoteSkin(noteSkin);
+            if (!updatePositions)
+                continue;
+            
+            controller.Position = new Vector2(c * NoteSkin.LaneSize - ((Controllers.Length - 1) * NoteSkin.LaneSize / 2f), 0);
         }
     }
-    
+
     /// <inheritdoc/>
     public override void OnNoteHit(NoteResult result)
     {
@@ -49,7 +42,7 @@ namespace Rubicon.Core.Rulesets.Mania;
     /// <param name="radians">The angle, in radians</param>
     public void SetDirectionAngle(float radians)
     {
-        foreach (NoteController noteManager in Managers)
+        foreach (NoteController noteManager in Controllers)
             if (noteManager is ManiaNoteController maniaNoteManager)
                 maniaNoteManager.DirectionAngle = radians;
     }

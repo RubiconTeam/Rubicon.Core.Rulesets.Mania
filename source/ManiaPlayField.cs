@@ -173,12 +173,13 @@ namespace Rubicon.Core.Rulesets.Mania;
     /// <inheritdoc />
     public override bool HasFailed() => Health <= 0;
 
-    public override BarLine CreateBarLine(ChartData chart, int index)
+    public override BarLine CreateBarLine() => new ManiaBarLine();
+
+    public override void AfterBarLineSetup(BarLine barLine)
     {
-        ManiaBarLine barLine = new ManiaBarLine();
-        barLine.Setup(chart, NoteSkin, Chart.ScrollSpeed);
-        barLine.Name = "Mania Bar Line " + index;
+        if (barLine is not ManiaBarLine maniaBarLine) 
+            return;
         
-        return barLine;
+        maniaBarLine.ChangeNoteSkin(NoteSkin, true);
     }
 }
