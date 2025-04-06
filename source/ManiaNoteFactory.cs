@@ -13,7 +13,7 @@ namespace Rubicon.Core.Rulesets.Mania;
         if (note is not ManiaNote maniaNote)
             return;
         
-        EmitSignal(NoteFactory.SignalName.SpawnNote, maniaNote, type);
+        EmitSignal(NoteFactory.SignalName.NoteSpawned, maniaNote, type);
         if (maniaNote.NoteSkin != null)
             return;
         

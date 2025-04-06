@@ -19,6 +19,8 @@ namespace Rubicon.Core.Rulesets.Mania;
 
     [Export] public ManiaNoteSkin NoteSkin;
 
+    [Export] public Node NoteSkinModule;
+
     /// <summary>
     /// Readies this PlayField for Mania gameplay!
     /// </summary>
@@ -37,10 +39,6 @@ namespace Rubicon.Core.Rulesets.Mania;
         }
 
         NoteSkin = ResourceLoader.LoadThreadedGet(noteSkinPath) as ManiaNoteSkin;
-        ManiaNoteFactory maniaFactory = new ManiaNoteFactory();
-        maniaFactory.NoteSkin = NoteSkin;
-        Factory = maniaFactory;
-        
         base.Setup(ruleSetData, meta, chart, targetIndex, events);
 
         Name = "Mania PlayField";
@@ -172,6 +170,13 @@ namespace Rubicon.Core.Rulesets.Mania;
 
     /// <inheritdoc />
     public override bool HasFailed() => Health <= 0;
+
+    public override NoteFactory CreateNoteFactory()
+    {
+        ManiaNoteFactory maniaFactory = new ManiaNoteFactory();
+        maniaFactory.NoteSkin = NoteSkin;
+        return maniaFactory;
+    }
 
     public override BarLine CreateBarLine() => new ManiaBarLine();
 

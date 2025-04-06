@@ -9,6 +9,8 @@ namespace Rubicon.Core.Rulesets.Mania;
 /// </summary>
 [GlobalClass] public partial class ManiaNoteSkin : Resource
 {
+	public const string GdManiaSkinModule = "GDManiaSkinModule";
+	
 	/// <summary>
 	/// The SpriteFrames resource to grab note textures from.
 	/// </summary>
@@ -35,19 +37,29 @@ namespace Rubicon.Core.Rulesets.Mania;
 	[Export] public SpriteFrames HoldCovers;
 	
 	/// <summary>
-	/// The scale used when generating notes and lanes.
+	/// Specifies direction names for each lane count.
 	/// </summary>
-	[Export] public Vector2 Scale = Vector2.One;
+	[Export] public Dictionary<int, string[]> Directions = new() { { 4, [ "left", "down", "up", "right" ] } };
 
 	/// <summary>
 	/// The width of each lane.
 	/// </summary>
-	[Export] public float LaneSize = 160f;
+	[ExportGroup("Graphics"), Export] public float LaneSize = 160f;
+	
+	/// <summary>
+	/// The scale used when generating notes and lanes.
+	/// </summary>
+	[Export] public Vector2 Scale = Vector2.One;
+	
+	/// <summary>
+	/// The filtering used when generating notes and lanes.
+	/// </summary>
+	[Export] public CanvasItem.TextureFilterEnum Filter = CanvasItem.TextureFilterEnum.Linear;
 
 	/// <summary>
 	/// Enabling this will cause confirm animaions on lanes to play every step.
 	/// </summary>
-	[Export] public bool StrobeHold = false;
+	[ExportGroup("Extras"), Export] public bool StrobeHold = false;
 
 	/// <summary>
 	/// Setting this to true will put hold tails behind the receptors.
@@ -60,19 +72,40 @@ namespace Rubicon.Core.Rulesets.Mania;
 	[Export] public bool HoldsBehindNotes = false;
 
 	/// <summary>
-	/// The filtering used when generating notes and lanes.
-	/// </summary>
-	[Export] public CanvasItem.TextureFilterEnum Filter = CanvasItem.TextureFilterEnum.Linear;
-
-	/// <summary>
-	/// Specifies direction names for each lane count.
-	/// </summary>
-	[Export] public Dictionary<int, string[]> Directions = new() { { 4, [ "left", "down", "up", "right" ] } };
-
-	/// <summary>
 	/// Whether to enable tiling on hold graphics. Hold textures in <see cref="Holds"/> should NOT be an <see cref="AtlasTexture"/>/part of a sprite sheet!
 	/// </summary>
 	[Export] public bool UseTiledHold = false;
+
+	/// <summary>
+	/// Instantiates this packed scene alongside this note skin when it gets loaded.
+	/// </summary>
+	[ExportGroup("Scripting"), Export] public PackedScene ModuleScene;
+
+	/// <summary>
+	/// Instantiates this script as a node alongside this note skin when it gets loaded.
+	/// </summary>
+	[Export] public Script ModuleScript;
+
+	/// <summary>
+	/// Returns a module for use with the note skin. The scene takes priority over the script.
+	/// </summary>
+	/// <returns>A Node</returns>
+	public Node InstantiateModule()
+	{
+		if (ModuleScene != null && ModuleScene.CanInstantiate())
+		{
+			Node scene = ModuleScene.Instantiate();
+			return scene;
+		}
+
+		if (ModuleScript is CSharpScript cSharpModule)
+			return cSharpModule.New().As<Node>();
+
+		if (ModuleScript is GDScript gdScriptModule)
+			return gdScriptModule.New().As<Node>();
+		
+		return null;
+	}
 
 	/// <summary>
 	/// Gets a direction name based on lane count and lane number.

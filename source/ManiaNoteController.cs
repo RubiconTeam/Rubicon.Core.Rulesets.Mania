@@ -55,6 +55,21 @@ namespace Rubicon.Core.Rulesets.Mania;
 	/// The lane graphic for this manager.
 	/// </summary>
 	[Export] public AnimatedSprite2D LaneObject;
+
+	/// <summary>
+	/// The currently running note skin module, if there is any.
+	/// </summary>
+	[Export] public Node NoteSkinModule;
+	
+	/// <summary>
+	/// Emitted when the pressed animation is played.
+	/// </summary>
+	[Signal] public delegate void PressedPlayedEventHandler();
+	
+	/// <summary>
+	/// Emitted when the neutral animation is played.
+	/// </summary>
+	[Signal] public delegate void NeutralPlayedEventHandler();
 	
 	private List<AnimatedSprite2D> _splashSprites = new();
 	private int _splashCount = 0;
@@ -111,9 +126,21 @@ namespace Rubicon.Core.Rulesets.Mania;
 	/// <param name="noteSkin">The note skin</param>
 	public void ChangeNoteSkin(ManiaNoteSkin noteSkin)
 	{
+		if (NoteSkin == noteSkin)
+			return;
+		
+		NoteSkinModule?.QueueFree();
+		
 		NoteSkin = noteSkin;
 		Direction = noteSkin.GetDirection(Lane, ParentBarLine.Chart.Lanes);
 		_splashCount = NoteSkin.GetSplashCountForDirection(Direction);
+
+		NoteSkinModule = NoteSkin.InstantiateModule();
+		if (NoteSkinModule != null)
+		{
+			NoteSkinModule.Name = "Note Skin Module";
+			AddChild(NoteSkinModule);
+		}
 		
 		if (noteSkin.HoldCovers != null)
 			_holdCover.SpriteFrames = noteSkin.HoldCovers;
@@ -196,7 +223,7 @@ namespace Rubicon.Core.Rulesets.Mania;
 					_holdCover.Rotation = 0f;
 					_holdCover.Play($"{Direction}LaneCoverStart");
 				}
-
+				
 				HitObjects[result.Index]?.SetZIndex(NoteSkin.HoldsBehindLanes ? LaneObject.ZIndex - 1 : LaneObject.ZIndex);
 			}	
 		}
@@ -220,9 +247,8 @@ namespace Rubicon.Core.Rulesets.Mania;
 				HitObjects[result.Index]?.PrepareRecycle();
 			}
 		}
-
-		result.Note.Hit = true;
-		ParentBarLine.OnNoteHit(result);
+		
+		base.OnNoteHit(result);
 	}
 
 	protected override void PressedEvent()
@@ -231,8 +257,11 @@ namespace Rubicon.Core.Rulesets.Mania;
 		if (NoteHitIndex >= notes.Length)
 		{
 			if (LaneObject.Animation != $"{Direction}LanePress")
+			{
 				LaneObject.Play($"{Direction}LanePress");
-				
+				EmitSignalPressedPlayed();
+			}
+			
 			return;
 		}
 
@@ -256,7 +285,10 @@ namespace Rubicon.Core.Rulesets.Mania;
 				InvokeGhostTap();
 				
 			if (LaneObject.Animation != $"{Direction}LanePress")
+			{
 				LaneObject.Play($"{Direction}LanePress");
+				EmitSignalPressedPlayed();
+			}
 		}
 	}
 
@@ -270,7 +302,10 @@ namespace Rubicon.Core.Rulesets.Mania;
 		}
 
 		if (LaneObject.Animation != $"{Direction}LaneNeutral")
+		{
 			LaneObject.Play($"{Direction}LaneNeutral", 1f, true);
+			EmitSignalNeutralPlayed();;
+		}
 	}
 
 	private void GenerateTapSplash()
@@ -311,7 +346,10 @@ namespace Rubicon.Core.Rulesets.Mania;
 			return;
 
 		if (LaneObject.Animation != $"{Direction}LaneNeutral")
-			LaneObject.Play($"{Direction}LaneNeutral");
+		{
+			LaneObject.Play($"{Direction}LaneNeutral", 1f, true);
+			EmitSignalNeutralPlayed();;
+		}
 	}
 
 	private void OnHoldCoverAnimationFinished()
