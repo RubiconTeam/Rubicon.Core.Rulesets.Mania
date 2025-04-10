@@ -14,22 +14,22 @@ namespace Rubicon.Core.Rulesets.Mania;
 	/// <summary>
 	/// The Note graphic for this note.
 	/// </summary>
-	public AnimatedSprite2D Note; // Perhaps it'd be a good idea to make an AnimatedTextureRect?
+	[Export] public AnimatedSprite2D Note; // Perhaps it'd be a good idea to make an AnimatedTextureRect?
 
 	/// <summary>
 	/// The hold control that contains everything related to the hold graphics.
 	/// </summary>
-	public Control HoldContainer;
+	[Export] public Control HoldContainer;
 	
 	/// <summary>
 	/// The Hold graphic.
 	/// </summary>
-	public TextureRect Hold;
+	[Export] public TextureRect Hold;
 
 	/// <summary>
 	/// The Tail graphic for this note.
 	/// </summary>
-	public AnimatedSprite2D Tail;
+	[Export] public AnimatedSprite2D Tail;
 
 	private Color _missedModulate = new Color(0.6f,0.6f,0.6f,0.6f);
 	private float _tailOffset = 0f;
