@@ -7,10 +7,8 @@ namespace Rubicon.Core.Rulesets.Mania;
 /// <summary>
 /// A resource that holds important information for Mania-related graphics.
 /// </summary>
-[GlobalClass] public partial class ManiaNoteSkin : Resource
+[GlobalClass] public partial class ManiaNoteSkin : NoteSkin
 {
-	public const string GdManiaSkinModule = "GDManiaSkinModule";
-	
 	/// <summary>
 	/// The SpriteFrames resource to grab note textures from.
 	/// </summary>
@@ -44,17 +42,7 @@ namespace Rubicon.Core.Rulesets.Mania;
 	/// <summary>
 	/// The width of each lane.
 	/// </summary>
-	[ExportGroup("Graphics"), Export] public float LaneSize = 160f;
-	
-	/// <summary>
-	/// The scale used when generating notes and lanes.
-	/// </summary>
-	[Export] public Vector2 Scale = Vector2.One;
-	
-	/// <summary>
-	/// The filtering used when generating notes and lanes.
-	/// </summary>
-	[Export] public CanvasItem.TextureFilterEnum Filter = CanvasItem.TextureFilterEnum.Linear;
+	[Export] public float LaneSize = 160f;
 
 	/// <summary>
 	/// Enabling this will cause confirm animaions on lanes to play every step.
