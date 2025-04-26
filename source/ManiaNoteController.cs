@@ -135,9 +135,10 @@ namespace Rubicon.Core.Rulesets.Mania;
 		Direction = noteSkin.GetDirection(Lane, ParentBarLine.Chart.Lanes);
 		_splashCount = NoteSkin.GetSplashCountForDirection(Direction);
 
-		NoteSkinModule = NoteSkin.InstantiateModule();
-		if (NoteSkinModule != null)
+		NoteSkinModule?.QueueFree();
+		if (NoteSkin.Module != null && NoteSkin.Module.CanInstantiate())
 		{
+			NoteSkinModule = NoteSkin.Module.Instantiate();
 			NoteSkinModule.Name = "Note Skin Module";
 			AddChild(NoteSkinModule);
 		}

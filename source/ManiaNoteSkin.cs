@@ -63,37 +63,11 @@ namespace Rubicon.Core.Rulesets.Mania;
 	/// Whether to enable tiling on hold graphics. Hold textures in <see cref="Holds"/> should NOT be an <see cref="AtlasTexture"/>/part of a sprite sheet!
 	/// </summary>
 	[Export] public bool UseTiledHold = false;
-
+	
 	/// <summary>
 	/// Instantiates this packed scene alongside this note skin when it gets loaded.
 	/// </summary>
-	[ExportGroup("Scripting"), Export] public PackedScene ModuleScene;
-
-	/// <summary>
-	/// Instantiates this script as a node alongside this note skin when it gets loaded.
-	/// </summary>
-	[Export] public Script ModuleScript;
-
-	/// <summary>
-	/// Returns a module for use with the note skin. The scene takes priority over the script.
-	/// </summary>
-	/// <returns>A Node</returns>
-	public Node InstantiateModule()
-	{
-		if (ModuleScene != null && ModuleScene.CanInstantiate())
-		{
-			Node scene = ModuleScene.Instantiate();
-			return scene;
-		}
-
-		if (ModuleScript is CSharpScript cSharpModule)
-			return cSharpModule.New().As<Node>();
-
-		if (ModuleScript is GDScript gdScriptModule)
-			return gdScriptModule.New().As<Node>();
-		
-		return null;
-	}
+	[Export] public PackedScene Module;
 
 	/// <summary>
 	/// Gets a direction name based on lane count and lane number.
