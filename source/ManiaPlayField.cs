@@ -1,7 +1,6 @@
 using System.Linq;
 using Rubicon.Core.Chart;
 using Rubicon.Core.Data;
-using Rubicon.Core.Events;
 using Rubicon.Core.Meta;
 using PukiTools.GodotSharp;
 
@@ -22,12 +21,12 @@ namespace Rubicon.Core.Rulesets.Mania;
     /// <param name="meta">The song meta</param>
     /// <param name="chart">The chart loaded</param>
     /// <param name="targetIndex">The index to play in <see cref="SongMeta.PlayableCharts"/>.</param>
-    public override void Setup(RuleSet ruleSetData, SongMeta meta, RubiChart chart, int targetIndex, EventMeta events)
+    public override void Setup(RuleSet ruleSetData, SongMeta meta, RubiChart chart, int targetIndex)
     {
         string noteSkinName = meta.NoteSkin;
         string noteSkinPath = RubiconCore.NoteSkins.Skins[noteSkinName].Rulesets[ruleSetData.UniqueId].Path;
         NoteSkin = ResourceLoader.Load<ManiaNoteSkin>(noteSkinPath);
-        base.Setup(ruleSetData, meta, chart, targetIndex, events);
+        base.Setup(ruleSetData, meta, chart, targetIndex);
 
         Name = "Mania PlayField";
         for (int i = 0; i < BarLines.Length; i++)
