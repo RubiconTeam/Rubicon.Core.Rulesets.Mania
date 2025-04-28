@@ -266,7 +266,7 @@ namespace Rubicon.Core.Rulesets.Mania;
 			return;
 		}
 
-		float songPos = Conductor.Time * 1000f;
+		float songPos = Conductor.ExactTime * 1000f;
 		float hitTime = GetCurrentNoteDistance(true);
 		while (notes[NoteHitIndex].MsTime - songPos <= -ProjectSettings.GetSetting("rubicon/judgments/bad_hit_window").AsSingle())
 		{
@@ -297,7 +297,7 @@ namespace Rubicon.Core.Rulesets.Mania;
 	{
 		if (NoteHeld != null)
 		{
-			float length = NoteHeld.MsTime + NoteHeld.MsLength - (Conductor.Time * 1000f);
+			float length = NoteHeld.MsTime + NoteHeld.MsLength - (Conductor.ExactTime * 1000f);
 			bool holding = length <= ProjectSettings.GetSetting("rubicon/judgments/bad_hit_window").AsSingle();
 			ProcessQueue.Add(GetResult(noteIndex: HoldingIndex, distance: length, holding: !holding));
 		}
