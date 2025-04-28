@@ -282,8 +282,9 @@ namespace Rubicon.Core.Rulesets.Mania;
 		}
 		else
 		{
-			if (UserSettings.Rubicon.Mania.GhostTapping)
-				InvokeGhostTap();
+			// TODO: Fix ghost tapping
+			//if (UserSettings.Rubicon.Mania.GhostTapping)
+			//	InvokeGhostTap();
 				
 			if (LaneObject.Animation != $"{Direction}LanePress")
 			{
