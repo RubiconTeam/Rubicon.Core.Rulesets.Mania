@@ -31,10 +31,12 @@ namespace Rubicon.Core.Rulesets.Mania;
         Name = "Mania PlayField";
         for (int i = 0; i < BarLines.Length; i++)
             BarLines[i].MoveToFront();
+        
+        UpdateOptions();
+        UserSettings.SettingsChanged += UpdateOptions;
     }
     
-    /// <inheritdoc/>
-    public override void UpdateOptions()
+    public void UpdateOptions()
     {
         //BarLineContainer.
         //BarLineContainer.Position = new Vector2(0f, UserSettings.DownScroll ? -120f : 120f);
@@ -61,10 +63,8 @@ namespace Rubicon.Core.Rulesets.Mania;
             //BarLines[i].SetAnchorsPreset(barLinePreset, true);
         }
         
-        GameHud?.Flip(UserSettings.Rubicon.Mania.DownScroll);
-        PlayerHud?.Flip(UserSettings.Rubicon.Mania.DownScroll);
-        
-        base.UpdateOptions();
+        GlobalHud?.FlipVertical(UserSettings.Rubicon.Mania.DownScroll);
+        BarLines[TargetIndex].LocalHud?.FlipVertical(UserSettings.Rubicon.Mania.DownScroll);
     }
 
     public override void UpdateHealth(Judgment hit)

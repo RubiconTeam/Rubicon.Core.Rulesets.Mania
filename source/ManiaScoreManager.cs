@@ -103,7 +103,11 @@ public partial class ManiaScoreManager : ScoreManager
         }
 
         if (rating == Judgment.Miss)
+        {
             MissStreak++;
+            Combo = 0;
+            ComboBreaks++;
+        }
         else if (rating != Judgment.None)
             MissStreak = 0;
                 
