@@ -57,6 +57,11 @@ namespace Rubicon.Core.Rulesets.Mania;
 	[Export] public AnimatedSprite2D LaneObject;
 
 	/// <summary>
+	/// Container that holds the currently held note.
+	/// </summary>
+	[Export] public Control NoteHolder;
+
+	/// <summary>
 	/// The currently running note skin module, if there is any.
 	/// </summary>
 	[Export] public Node NoteSkinModule;
@@ -80,9 +85,17 @@ namespace Rubicon.Core.Rulesets.Mania;
 	{
 		Action = $"play_mania_{ParentBarLine.Controllers.Length}k_{Lane}";
 		
+		LaneObject = new AnimatedSprite2D();
+		LaneObject.Name = "Lane Graphic";
+		LaneObject.AnimationFinished += OnAnimationFinish;
+		AddChild(LaneObject);
+
+		NoteHolder = new Control();
+		NoteHolder.Name = "Note Holder";
+		AddChild(NoteHolder);
+		
 		_holdCover = new AnimatedSprite2D();
 		_holdCover.Name = "Hold Cover";
-		_holdCover.ZIndex = 1;
 		_holdCover.Visible = false;
 		_holdCover.AnimationFinished += OnHoldCoverAnimationFinished;
 		AddChild(_holdCover);
@@ -145,20 +158,14 @@ namespace Rubicon.Core.Rulesets.Mania;
 		
 		if (noteSkin.HoldCovers != null)
 			_holdCover.SpriteFrames = noteSkin.HoldCovers;
-
-		if (LaneObject == null)
-		{
-			LaneObject = new AnimatedSprite2D();
-			LaneObject.Name = "Lane Graphic";
-			LaneObject.AnimationFinished += OnAnimationFinish;
-			AddChild(LaneObject);
-			MoveChild(LaneObject, 0);
-		}
 		
 		LaneObject.Scale = Vector2.One * NoteSkin.Scale;
 		LaneObject.SpriteFrames = NoteSkin.Lanes;
 		LaneObject.TextureFilter = NoteSkin.Filter;
 		LaneObject.Play($"{Direction}LaneNeutral", 1f, true);
+		
+		int index = Mathf.Max(LaneObject.GetIndex() + (NoteSkin.HoldsBehindNotes ? -1 : 1), 0);
+		MoveChild(NoteHolder, index);
 	}
 
 	protected override void AssignData(Note note, NoteData noteData)
@@ -172,6 +179,7 @@ namespace Rubicon.Core.Rulesets.Mania;
 	/// <inheritdoc/>
 	protected override void OnNoteHit(NoteResult result)
 	{
+		Note hitObject = HitObjects[result.Index];
 		if (result.Rating != Judgment.Miss)
 		{
 			if (result.Hit != Hit.Hold)
@@ -194,8 +202,8 @@ namespace Rubicon.Core.Rulesets.Mania;
 							RemoveChild(HitObjects[result.Index]);
 						break;
 					case Hit.Tail:
-						if (HitObjects[result.Index] != null)
-							RemoveChild(HitObjects[result.Index]);
+						if (hitObject != null)
+							NoteHolder.RemoveChild(hitObject);
 						
 						if (NoteSkin.HoldCovers == null || !greatOrAbove)
 							break;
@@ -205,7 +213,7 @@ namespace Rubicon.Core.Rulesets.Mania;
 						break;
 				}
 				
-				HitObjects[result.Index]?.PrepareRecycle();
+				hitObject?.PrepareRecycle();
 			}
 			else
 			{
@@ -225,15 +233,19 @@ namespace Rubicon.Core.Rulesets.Mania;
 					_holdCover.Play($"{Direction}LaneCoverStart");
 				}
 				
-				HitObjects[result.Index]?.SetZIndex(NoteSkin.HoldsBehindLanes ? LaneObject.ZIndex - 1 : LaneObject.ZIndex);
+				hitObject?.Reparent(NoteHolder, false);
+				
+				//HitObjects[result.Index]?.SetZIndex(NoteSkin.HoldsBehindLanes ? LaneObject.ZIndex - 1 : LaneObject.ZIndex);
 			}	
 		}
 		else
 		{
 			if (result.Note == NoteHeld)
 			{
-				if (HitObjects[result.Index] is ManiaNote maniaNote)
+				if (hitObject is ManiaNote maniaNote)
 					maniaNote.UnsetHold();
+				
+				hitObject?.Reparent(this);
 			
 				NoteHeld = null;
 				if (NoteSkin.HoldCovers != null)
@@ -242,10 +254,10 @@ namespace Rubicon.Core.Rulesets.Mania;
 
 			if (result.Note.MsLength <= 0f)
 			{
-				if (HitObjects[result.Index] != null)
-					RemoveChild(HitObjects[result.Index]);
+				if (hitObject != null)
+					RemoveChild(hitObject);
 				
-				HitObjects[result.Index]?.PrepareRecycle();
+				hitObject?.PrepareRecycle();
 			}
 		}
 		

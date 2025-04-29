@@ -86,7 +86,6 @@ namespace Rubicon.Core.Rulesets.Mania;
 		{
 			direction = NoteSkin.GetDirection(noteData.Lane, ParentController.ParentBarLine.Chart.Lanes).ToLower();
 			Note.Play($"{direction}NoteNeutral");
-			Note.ZIndex = NoteSkin.HoldsBehindNotes ? 1 : 0;
 			Note.TextureFilter = NoteSkin.Filter;
 			HoldContainer.TextureFilter = NoteSkin.Filter;
 			Note.Visible = true;
@@ -176,30 +175,14 @@ namespace Rubicon.Core.Rulesets.Mania;
 		Note.SpriteFrames = noteSkin.Notes;
 		Note.TextureFilter = NoteSkin.Filter;
 		Note.Scale = Vector2.One * NoteSkin.Scale;
-		Note.ZIndex = NoteSkin.HoldsBehindNotes ? 1 : 0;
+		MoveChild(Note, 0);
 		
 		Tail.Centered = false;
 		Tail.SpriteFrames = noteSkin.Holds;
 		Tail.TextureFilter = NoteSkin.Filter;
-
-		if (Info == null || ParentController == null)
-			return;
 		
-		string direction = NoteSkin.GetDirection(Info.Lane, ParentController.ParentBarLine.Chart.Lanes).ToLower();
-		Texture2D holdTexture = NoteSkin.Holds.GetFrameTexture($"{direction}NoteHold", 0);
-		Hold.Texture = holdTexture;
-		Hold.TextureFilter = NoteSkin.Filter;
-		HoldContainer.TextureFilter = NoteSkin.Filter;
-		HoldContainer.Modulate = new Color(1f, 1f, 1f, 0.5f);
-		HoldContainer.Size = new Vector2(0f, holdTexture.GetHeight());
-		HoldContainer.Scale = NoteSkin.Scale;
-		HoldContainer.PivotOffset = new Vector2(0f, HoldContainer.Size.Y / 2f);
-		HoldContainer.Position = new Vector2(0f, -HoldContainer.Size.Y / 2f);
-		Hold.StretchMode = noteSkin.UseTiledHold && holdTexture is not AtlasTexture
-			? TextureRect.StretchModeEnum.Tile
-			: TextureRect.StretchModeEnum.Scale;
-		
-		Tail.Play($"{direction}NoteTail");
+		int index = Mathf.Max(Note.GetIndex() + (NoteSkin.HoldsBehindNotes ? -1 : 1), 0);
+		MoveChild(HoldContainer, index);
 	}
 	
 	/// <summary>
