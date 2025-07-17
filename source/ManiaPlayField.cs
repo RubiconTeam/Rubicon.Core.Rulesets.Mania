@@ -88,7 +88,7 @@ namespace Rubicon.Core.Rulesets.Mania;
                 healthAddition = -2;
                 break;
             case Judgment.Miss:
-                healthAddition = -5 - (int)ScoreManager.MissStreak * 4;
+                healthAddition = -5 - (int)(ScoreManager.MissStreak * 2.5f);
                 break;
         }
 
